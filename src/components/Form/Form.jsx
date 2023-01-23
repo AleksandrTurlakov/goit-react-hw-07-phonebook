@@ -1,22 +1,18 @@
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { FormWrapper, Label, Input, Button } from './Form.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contactsSlice';
+import { addContact } from '../../redux/contactsOperations';
 
 export const Form = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.contacts);
+  const contacts = useSelector(state => state.contacts.items);
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
-  const NameInputId = nanoid();
-  const NumberInputId = nanoid();
+  const [phone, setPhone] = useState('');
 
   const handleSubmit = evt => {
     evt.preventDefault();
-    const newContact = { id: nanoid(), name, number };
+    const newContact = { name, phone };
     if (
       contacts.find(
         contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
@@ -24,7 +20,7 @@ export const Form = () => {
     ) {
       alert(`${newContact.name} is already in contact`);
     } else {
-      dispatch(addContact(name, number));
+      dispatch(addContact({ name, phone }));
     }
     reset();
   };
@@ -36,8 +32,8 @@ export const Form = () => {
         setName(value);
         break;
 
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         break;
 
       default:
@@ -47,12 +43,12 @@ export const Form = () => {
 
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <Label htmlFor={NameInputId}>
+      <Label>
         Name
         <Input
           type="text"
@@ -62,20 +58,18 @@ export const Form = () => {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           onChange={handleChange}
-          id={NameInputId}
         />
       </Label>
-      <Label htmlFor={NumberInputId}>
-        Number
+      <Label>
+        Phone
         <Input
           type="tel"
-          name="number"
-          value={number}
+          name="phone"
+          value={phone}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           onChange={handleChange}
-          id={NumberInputId}
         />
       </Label>
       <Button type="submit">Add contact</Button>

@@ -7,12 +7,12 @@ import {
   Button,
 } from './Contacts.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../redux/contactsSlice';
+import { deleteContact } from '../../redux/contactsOperations';
 import { updateFilter } from '../../redux/filterSlice';
 
 export const Contacts = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.contacts);
+  const contacts = useSelector(state => state.contacts.items);
   const filterName = useSelector(state => state.filter);
 
   const getFilterContacts = () => {
@@ -24,21 +24,19 @@ export const Contacts = () => {
 
   const filterContacts = getFilterContacts();
 
+  const handleClick = id => {
+    dispatch(deleteContact(id));
+    dispatch(updateFilter(''));
+  };
+
   return (
     <ContactsList>
-      {filterContacts.map(({ name, id, number }) => (
+      {filterContacts.map(({ name, id, phone }) => (
         <ContactsItem key={id}>
           <ContactName>
-            {name}: {number}
+            {name}: {phone}
           </ContactName>
-          <Button
-            onClick={() => {
-              dispatch(deleteContact(id));
-              dispatch(updateFilter(''));
-            }}
-          >
-            Delete
-          </Button>
+          <Button onClick={() => handleClick(id)}>Delete</Button>
         </ContactsItem>
       ))}
     </ContactsList>

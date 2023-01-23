@@ -2,21 +2,50 @@ import { Form } from './Form/Form';
 import { Contacts } from './Contacts/Contacts';
 import { Filter } from './Filter/Filter';
 import { GlobalStyle } from './GlobalStyle/GlobalStyle';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from '../redux/contactsOperations';
+import { useEffect } from 'react';
+import { Loader } from './Loader/Loader';
 
 export const App = () => {
-  const contacts = useSelector(state => state.contacts.contacts);
+  const { items, isLoading, error } = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
     <>
       <h1>Phonebook</h1>
       <GlobalStyle />
       <Form />
-      <h2>Contacts</h2>
-      <Filter />
-      {contacts.length === 0 ? (
-        <h2>You don't have saved contacts</h2>
+      {error ? (
+        <h2>{error}</h2>
       ) : (
-        <Contacts />
+        <>
+          <h2>
+            {isLoading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Loader />
+              </div>
+            ) : (
+              `In youre phonebook - ${items.length} Contacts`
+            )}
+          </h2>
+          <Filter />
+          {items.length === 0 && !isLoading ? (
+            <h2>You don't have saved contacts</h2>
+          ) : (
+            <Contacts />
+          )}
+        </>
       )}
     </>
   );

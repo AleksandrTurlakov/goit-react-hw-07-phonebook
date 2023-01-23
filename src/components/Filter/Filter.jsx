@@ -12,7 +12,7 @@ export const Filter = () => {
   };
 
   return (
-    <Label htmlFor="">
+    <Label>
       Find contacts by Name
       <Input type="text" value={value} onChange={changeFilter} />
     </Label>
